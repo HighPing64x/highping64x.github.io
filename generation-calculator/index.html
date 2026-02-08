@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>辈分计算器</title>
+    <style>
+        :root {
+            --bg: #0f1720;
+            --card: #0b1220cc;
+            --accent: #0ea5ff;
+            --glass: rgba(255, 255, 255, 0.06);
+            --text: #e6eef8;
+            --muted: #9fb0c8;
+            --radius: 12px;
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC";
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(180deg, #071022 0%, #081422 50%, #021018 100%);
+            color: var(--text)
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px
+        }
+
+        .card {
+            width: 760px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 18px
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .stage {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 16px
+        }
+
+        .left {
+            padding: 16px;
+            background: var(--glass);
+            border-radius: 12px
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .rel-btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            cursor: pointer
+        }
+
+        .rel-btn:hover {
+            background: rgba(255, 255, 255, 0.02)
+        }
+
+        .rel-btn.active {
+            background: linear-gradient(90deg, var(--accent), #7c3aed);
+            color: #021018;
+            border: 0
+        }
+
+        .path {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .chip {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 8px 10px;
+            border-radius: 999px;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .chip .x {
+            cursor: pointer;
+            color: var(--muted);
+            font-weight: 700
+        }
+
+        .actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px
+        }
+
+        .primary {
+            background: var(--accent);
+            border: 0;
+            color: #021018;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+        .ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer
+        }
+
+        .right {
+            padding: 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: 12px
+        }
+
+        .result {
+            font-size: 22px;
+            font-weight: 700
+        }
+
+        .explain {
+            color: var(--muted);
+            margin-top: 8px
+        }
+
+        .small {
+            font-size: 13px
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .add-input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: var(--text)
+        }
+
+        .danger {
+            color: #ff6b6b
+        }
+
+        footer {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: right
+        }
+
+        @media(max-width:840px) {
+            .card {
+                width: 100%
+            }
+
+            .stage {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="card">
+            <div class="header">
+                <div class="logo">辈</div>
+                <div>
+                    <h1>辈分计算器</h1>
+                    <div class="muted">仿 Windows 11 风格 · 支持添加/删除关系步骤</div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="left">
+                    <div class="small">关系按键</div>
+                    <div class="controls" id="buttons">
+                        <!-- buttons populated by JS -->
+                    </div>
+
+                    <div class="small" style="margin-top:12px">当前路径</div>
+                    <div class="path" id="path"></div>
+
+                    <div class="actions">
+                        <button class="primary" id="undo">删除最后一步</button>
+                        <button class="ghost" id="clear">清空</button>
+                    </div>
+
+                    <div style="margin-top:12px" class="small">添加自定义关系（仅显示标签）</div>
+                    <div class="input-row" style="margin-top:8px">
+                        <input id="customLabel" class="add-input" placeholder="例如：表兄 / 舅舅的女儿">
+                        <button class="ghost" id="addCustom">添加</button>
+                    </div>
+                </div>
+
+                <div class="right">
+                    <div class="small">计算结果</div>
+                    <div class="result" id="result">—</div>
+                    <div class="explain" id="explain">请通过按键构建关系路径，例如按“父”表示对方是你的父亲。</div>
+                    <div style="margin-top:12px" class="small">提示：可切换系统深色/浅色以配合外观。</div>
+                    <footer>若出现不支持的同性婚姻，会给出明确提示。</footer>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="rules-data" type="application/json">
+  [
+    {
+      "id": "bo-gong",
+      "pattern": ["父", "父", "兄"],
+      "names": ["伯公", "伯祖", "伯翁", "大爷爷", "大爷", "大公", "大伯公", "大阿爷", "伯祖父", "伯公", "太伯父", "伯奶爷", "伯爷爷", "伯爷"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "爸爸的爸爸的哥哥"
+    },
+    {
+      "id": "shu-gong",
+      "pattern": ["父", "父", "弟"],
+      "names": ["叔公", "叔祖", "叔翁", "小爷爷", "晚公", "叔祖父", "叔公", "太叔父", "叔奶爷", "叔爷爷", "叔爷"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "爸爸的爸爸的弟弟"
+    },
+    {
+      "id": "jiu-ye-ye",
+      "pattern": ["父", "母", "兄"],
+      "names": ["舅爷爷", "舅祖", "舅爹", "太舅父", "舅祖父", "舅公", "太舅父", "舅奶爷", "舅爷爷", "舅爷"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "爸爸的妈妈的兄弟"
+    },
+    {
+      "id": "gu-nai-nai",
+      "pattern": ["父", "父", "姐"],
+      "names": ["姑奶奶", "祖姑", "姑祖母", "姑婆", "太姑母", "姑奶奶", "姑奶"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "爸爸的爸爸的姐妹"
+    },
+    {
+      "id": "yi-nai-nai",
+      "pattern": ["父", "母", "姐"],
+      "names": ["姨奶奶", "姨奶", "姨祖母", "姨婆", "太姨母", "姨奶奶", "姨奶"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "爸爸的妈妈的姐妹"
+    },
+    {
+      "id": "bo-wai-gong",
+      "pattern": ["母", "父", "兄"],
+      "names": ["伯外公", "外伯祖", "伯外祖", "大外公", "大姥爷", "大外爷", "伯外祖父", "伯外公", "伯外爷", "外伯公", "外伯祖父", "外太伯父", "伯姥爷", "伯姥公", "伯毑公", "伯毑爷", "伯嘎公"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "妈妈的爸爸的哥哥"
+    },
+    {
+      "id": "shu-wai-gong",
+      "pattern": ["母", "父", "弟"],
+      "names": ["叔外公", "外叔祖", "叔外祖", "小外公", "小姥爷", "小外爷", "叔外祖父", "叔外公", "叔外爷", "外叔公", "外叔祖父", "外太叔父", "叔姥爷", "叔姥公", "叔毑公", "叔毑爷", "叔嘎公"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "妈妈的爸爸的弟弟"
+    },
+    {
+      "id": "jiu-wai-gong",
+      "pattern": ["母", "母", "兄"],
+      "names": ["舅外公", "舅公", "舅外祖父", "舅外公", "舅外爷", "外舅公", "外舅祖父", "外太舅父", "舅姥爷", "舅姥公", "舅毑公", "舅毑爷", "舅嘎公"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "妈妈的妈妈的兄弟"
+    },
+    {
+      "id": "gu-wai-po",
+      "pattern": ["母", "父", "姐"],
+      "names": ["姑外婆", "姑婆", "姑外祖母", "姑外婆", "姑外奶", "外姑婆", "外姑祖母", "外太姑母", "姑姥姥", "姑姥娘", "姑姥婆", "姑毑婆", "姑毑毑", "姑嘎嘎", "姑嫏嫏", "姑嫏娘"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "妈妈的爸爸的姐妹"
+    },
+    {
+      "id": "yi-wai-po",
+      "pattern": ["母", "母", "姐"],
+      "names": ["姨外婆", "姨婆", "姨外祖母", "姨外婆", "姨外奶", "外姨婆", "外姨祖母", "外太姨母", "姨姥姥", "姨姥娘", "姨姥婆", "姨毑婆", "姨毑毑", "姨嘎嘎", "姨嫏嫏", "姨嫏娘"],
+      "match": "exact",
+      "priority": 100,
+      "targetGender": "any",
+      "note": "妈妈的妈妈的姐妹"
+    },
+    {
+      "id": "tang-ge",
+      "pattern": ["父", "兄", "子"],
+      "names": ["堂哥", "堂阿哥", "堂哥", "同堂哥", "从父哥", "叔伯哥", "从哥"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的兄弟的儿子"
+    },
+    {
+      "id": "gu-biao-ge",
+      "pattern": ["父", "姐", "子"],
+      "names": ["姑表哥", "姑家哥"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的姐妹的儿子"
+    },
+    {
+      "id": "jiu-biao-ge",
+      "pattern": ["母", "兄", "子"],
+      "names": ["舅表哥", "舅家哥"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的兄弟的儿子"
+    },
+    {
+      "id": "yi-ge",
+      "pattern": ["母", "姐", "子"],
+      "names": ["姨哥", "从母哥", "姨家哥", "从哥"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的姐妹的儿子"
+    },
+    {
+      "id": "tang-di",
+      "pattern": ["父", "兄", "子"],
+      "names": ["堂弟", "堂阿弟", "堂弟", "同堂弟", "从父弟", "叔伯弟", "从弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的兄弟的儿子"
+    },
+    {
+      "id": "gu-biao-di",
+      "pattern": ["父", "姐", "子"],
+      "names": ["姑表弟", "姑家弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的姐妹的儿子"
+    },
+    {
+      "id": "jiu-biao-di",
+      "pattern": ["母", "兄", "子"],
+      "names": ["舅表弟", "舅家弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的兄弟的儿子"
+    },
+    {
+      "id": "yi-di",
+      "pattern": ["母", "姐", "子"],
+      "names": ["姨弟", "从母弟", "姨家弟", "从弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的姐妹的儿子"
+    },
+    {
+      "id": "tang-xiong-di",
+      "pattern": ["父", "兄", "子"],
+      "names": ["堂兄弟", "同堂兄弟", "从父兄弟", "叔伯兄弟", "从兄弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的兄弟的儿子"
+    },
+    {
+      "id": "gu-biao-xiong-di",
+      "pattern": ["父", "姐", "子"],
+      "names": ["姑表兄弟", "姑家兄弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "爸爸的姐妹的儿子"
+    },
+    {
+      "id": "jiu-biao-xiong-di",
+      "pattern": ["母", "兄", "子"],
+      "names": ["舅表兄弟", "舅家兄弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的兄弟的儿子"
+    },
+    {
+      "id": "yi-xiong-di",
+      "pattern": ["母", "姐", "子"],
+      "names": ["姨兄弟", "从母兄弟", "姨家兄弟", "从兄弟"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "male",
+      "note": "妈妈的姐妹的儿子"
+    },
+    {
+      "id": "tang-jie",
+      "pattern": ["父", "兄", "女"],
+      "names": ["堂姐", "堂阿姐", "堂姐", "同堂姐", "从父姐", "叔伯姐", "从姐"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的兄弟的女儿"
+    },
+    {
+      "id": "gu-biao-jie",
+      "pattern": ["父", "姐", "女"],
+      "names": ["姑表姐", "姑家姐"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的姐妹的女儿"
+    },
+    {
+      "id": "jiu-biao-jie",
+      "pattern": ["母", "兄", "女"],
+      "names": ["舅表姐", "舅家姐"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的兄弟的女儿"
+    },
+    {
+      "id": "yi-jie",
+      "pattern": ["母", "姐", "女"],
+      "names": ["姨姐", "从母姐", "姨家姐", "从姐"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的姐妹的女儿"
+    },
+    {
+      "id": "tang-mei",
+      "pattern": ["父", "兄", "女"],
+      "names": ["堂妹", "堂阿妹", "堂妹", "同堂妹", "从父妹", "叔伯妹", "从妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的兄弟的女儿"
+    },
+    {
+      "id": "gu-biao-mei",
+      "pattern": ["父", "姐", "女"],
+      "names": ["姑表妹", "姑家妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的姐妹的女儿"
+    },
+    {
+      "id": "jiu-biao-mei",
+      "pattern": ["母", "兄", "女"],
+      "names": ["舅表妹", "舅家妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的兄弟的女儿"
+    },
+    {
+      "id": "yi-mei",
+      "pattern": ["母", "姐", "女"],
+      "names": ["姨妹", "从母妹", "姨家妹", "从妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的姐妹的女儿"
+    },
+    {
+      "id": "tang-jie-mei",
+      "pattern": ["父", "兄", "女"],
+      "names": ["堂姐妹", "同堂姐妹", "从父姐妹", "叔伯姐妹", "从姐妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的兄弟的女儿"
+    },
+    {
+      "id": "gu-biao-jie-mei",
+      "pattern": ["父", "姐", "女"],
+      "names": ["姑表姐妹", "姑家姐妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "爸爸的姐妹的女儿"
+    },
+    {
+      "id": "jiu-biao-jie-mei",
+      "pattern": ["母", "兄", "女"],
+      "names": ["舅表姐妹", "舅家姐妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的兄弟的女儿"
+    },
+    {
+      "id": "yi-jie-mei",
+      "pattern": ["母", "姐", "女"],
+      "names": ["姨姐妹", "从母姐妹", "姨家姐妹", "从姐妹"],
+      "match": "exact",
+      "priority": 80,
+      "targetGender": "female",
+      "note": "妈妈的姐妹的女儿"
+    }
+  ]
+    </script>
+
+    <script>
+        const defs = [
+            { code: '父', label: '父' },
+            { code: '母', label: '母' },
+            { code: '子', label: '子' },
+            { code: '女', label: '女' },
+            { code: '兄', label: '兄' },
+            { code: '弟', label: '弟' },
+            { code: '姐', label: '姐' },
+            { code: '妹', label: '妹' },
+            { code: '夫', label: '夫' },
+            { code: '妻', label: '妻' }
+        ];
+
+        const btns = document.getElementById('buttons');
+        const pathEl = document.getElementById('path');
+        const resultEl = document.getElementById('result');
+        const explainEl = document.getElementById('explain');
+
+        let steps = [];
+
+        function makeBtn(d) {
+            const b = document.createElement('button');
+            b.className = 'rel-btn';
+            b.textContent = d.label;
+            b.onclick = () => { addStep(d.code); }
+            return b;
+        }
+
+        defs.forEach(d => btns.appendChild(makeBtn(d)));
+
+        // ---- rules.json loader & matcher ----
+        let rules = [];
+
+        async function loadRules() {
+            try {
+                const res = await fetch('rules.json');
+                rules = await res.json();
+                rules.forEach(r => { r.match = r.match || 'suffix'; r.priority = r.priority || 0; });
+                rules.sort((a, b) => (b.priority - a.priority) || (b.pattern.length - a.pattern.length));
+            } catch (e) {
+                console.warn('加载 rules.json 失败：', e);
+                // 回退：尝试从页面内嵌的 <script id="rules-data" type="application/json"> 读取
+                try {
+                    const tag = document.getElementById('rules-data');
+                    if (tag) {
+                        rules = JSON.parse(tag.textContent || tag.innerText);
+                        rules.forEach(r => { r.match = r.match || 'suffix'; r.priority = r.priority || 0; });
+                        rules.sort((a, b) => (b.priority - a.priority) || (b.pattern.length - a.pattern.length));
+                        console.info('已从页面内嵌 rules-data 加载规则，共', rules.length, '条');
+                        return;
+                    }
+                } catch (e2) { console.warn('从内嵌 rules-data 读取失败：', e2); }
+                rules = [];
+            }
+        }
+        loadRules();
+
+        function matchRules(codes) {
+            if (!rules || rules.length === 0) return null;
+            for (const rule of rules) {
+                const p = rule.pattern || [];
+                if (rule.match === 'exact') {
+                    if (codes.length === p.length && codes.join(',') === p.join(',')) return rule;
+                } else if (rule.match === 'suffix') {
+                    if (codes.length >= p.length && codes.slice(-p.length).join(',') === p.join(',')) return rule;
+                } else if (rule.match === 'contains') {
+                    for (let i = 0; i <= codes.length - p.length; i++) {
+                        if (codes.slice(i, i + p.length).join(',') === p.join(',')) return rule;
+                    }
+                }
+            }
+            return null;
+        }
+
+        document.getElementById('addCustom').onclick = () => {
+            const v = document.getElementById('customLabel').value.trim();
+            if (!v) return;
+            addStep(v, true);
+            document.getElementById('customLabel').value = '';
+        }
+
+        document.getElementById('undo').onclick = () => { steps.pop(); render(); }
+        document.getElementById('clear').onclick = () => { steps = []; render(); }
+
+        function addStep(code, custom = false) { steps.push({ code, custom }); render(); }
+
+        function render() {
+            pathEl.innerHTML = '';
+            steps.forEach((s, i) => {
+                const c = document.createElement('div'); c.className = 'chip';
+                const t = document.createElement('div'); t.textContent = s.code;
+                const x = document.createElement('div'); x.className = 'x'; x.textContent = '✕';
+                x.onclick = () => { steps.splice(i, 1); render(); }
+                c.appendChild(t); c.appendChild(x); pathEl.appendChild(c);
+            });
+            compute();
+        }
+
+        function compute() {
+            if (steps.length === 0) { resultEl.textContent = '—'; explainEl.textContent = '请通过按键构建关系路径，例如按“父”表示对方是你的父亲。'; return }
+
+            // try matching external rules first
+            const codes = steps.map(s => s.code);
+            const matched = matchRules(codes);
+            if (matched) {
+                resultEl.textContent = (matched.names && matched.names.length) ? matched.names[0] : (matched.id || matched.note || matched.pattern.join('的'));
+                explainEl.textContent = '规则匹配：' + (matched.note || matched.pattern.join('的'));
+                return;
+            }
+
+            // Detect impossible same-sex marriages: simple heuristic
+            let genders = new Map(); // node index -> gender ('M'/'F')
+            // node 0 = 我, genders[0] unknown
+            let nodes = [{ generation: 0, gender: null, via: null }];
+            let cur = 0; // index
+            let impossible = null;
+
+            for (let i = 0; i < steps.length; i++) {
+                const r = steps[i].code;
+                const prev = nodes[cur];
+                let next = { generation: prev.generation, gender: null, via: r };
+
+                if (r === '父' || r === '母') {
+                    next.generation = prev.generation + 1;
+                    next.gender = (r === '父') ? 'M' : 'F';
+                } else if (r === '子' || r === '女') {
+                    next.generation = prev.generation - 1;
+                    next.gender = (r === '子') ? 'M' : 'F';
+                } else if (['兄', '弟', '姐', '妹'].includes(r)) {
+                    next.generation = prev.generation;
+                    next.gender = (r === '兄' || r === '弟') ? 'M' : 'F';
+                    next.sibling = true;
+                    next.older = (r === '兄' || r === '姐');
+                } else if (r === '夫' || r === '妻') {
+                    // spouse: generation unchanged, spouse gender known
+                    next.generation = prev.generation;
+                    next.gender = (r === '夫') ? 'M' : 'F';
+                    // If prev.gender known and equals next.gender => same-sex marriage
+                    if (prev.gender && prev.gender === next.gender) {
+                        impossible = (next.gender === 'M') ? '不支持GAY婚姻' : '不支持LESBIAN婚姻';
+                        break;
+                    }
+                } else {
+                    // custom labels: we treat as unknown node but include label path
+                    next.customLabel = r;
+                }
+
+                nodes.push(next);
+                cur = nodes.length - 1;
+            }
+
+            if (impossible) { resultEl.textContent = impossible; explainEl.textContent = ''; return }
+
+            const target = nodes[nodes.length - 1];
+
+            // Simple ancestor mapping
+            if (target.generation > 0) {
+                // find first parent-type (父 or 母) in steps
+                let firstParent = null;
+                for (let s of steps) { if (s.code === '父' || s.code === '母') { firstParent = s.code; break } }
+                if (target.generation === 1) { resultEl.textContent = (target.gender === 'M') ? '父亲' : '母亲'; explainEl.textContent = '直系上一代'; return }
+                let prefixCount = target.generation - 2;
+                let prefix = '曾'.repeat(Math.max(0, prefixCount));
+                let base = (firstParent === '父') ? '祖' : (firstParent === '母') ? '外祖' : '祖';
+                let suffix = (target.gender === 'M') ? '父' : '母';
+                resultEl.textContent = prefix + base + suffix; explainEl.textContent = '祖辈关系（按是否母系区分外祖）'; return
+            }
+
+            if (target.generation < 0) {
+                // descendant
+                let depth = Math.abs(target.generation);
+                if (depth === 1) { resultEl.textContent = (target.gender === 'M') ? '儿子' : '女儿'; explainEl.textContent = '直系下一代'; return }
+                let prefix = '曾'.repeat(Math.max(0, depth - 2));
+                // determine whether via father or mother for 孙/外孙 by scanning steps from start for a parent step
+                let lastParent = null; // the parent in path immediately above the descendant
+                for (let i = 0; i < steps.length; i++) {
+                    if (steps[i].code === '子' || steps[i].code === '女') {
+                        lastParent = steps[i].code; break;
+                    }
+                }
+                // fallback: assume paternal
+                let base = (lastParent === '子' || lastParent === '女') ? '孙' : '孙';
+                // if the path included a 母 as the intermediate parent, mark 外孙
+                // simple heuristic: if any '母' occurs before the final child steps, treat as maternal
+                let maternal = false;
+                for (let i = 0; i < steps.length; i++) {
+                    if (steps[i].code === '母') { maternal = true; break }
+                }
+                if (maternal) base = '外' + base;
+                let suffix = (target.gender === 'M') ? '子' : '女';
+                resultEl.textContent = prefix + base + suffix; explainEl.textContent = '后代关系'; return
+            }
+
+            // same generation
+            // direct sibling
+            if (target.via && ['兄', '弟', '姐', '妹'].includes(target.via)) {
+                const map = { 兄: '兄弟中的长兄（哥哥）', 弟: '兄弟中的弟弟', 姐: '姐妹中的姐姐', 妹: '姐妹中的妹妹' };
+                let t = target.via;
+                let out = (t === '兄') ? '哥哥' : (t === '弟') ? '弟弟' : (t === '姐') ? '姐姐' : '妹妹';
+                resultEl.textContent = out; explainEl.textContent = map[t]; return
+            }
+
+            // handle parent->sibling (uncle/aunt)
+            // find patterns like [父|母] + [兄|弟|姐|妹]
+            if (steps.length >= 2) {
+                const a = steps[steps.length - 2].code;
+                const b = steps[steps.length - 1].code;
+                if ((a === '父' || a === '母') && (['兄', '弟', '姐', '妹'].includes(b))) {
+                    // paternal vs maternal
+                    const side = (a === '父') ? 'paternal' : 'maternal';
+                    let out = '';
+                    if (side === 'paternal') {
+                        if (b === '兄') out = '伯父';
+                        else if (b === '弟') out = '叔父';
+                        else if (b === '姐' || b === '妹') out = '姑妈';
+                    } else {
+                        if (b === '兄' || b === '弟') out = '舅舅';
+                        else out = '姨妈';
+                    }
+                    resultEl.textContent = out; explainEl.textContent = '父/母的兄弟姐妹（按父系/母系区分）'; return
+                }
+                // sibling -> child (侄/外甥)
+                if ((a === '兄' || a === '姐' || a === '弟' || a === '妹') && (b === '子' || b === '女')) {
+                    // if sibling male => 侄子/侄女; if sibling female => 外甥/外甥女
+                    const sibling = a;
+                    const isMaleSibling = (sibling === '兄' || sibling === '弟');
+                    const base = isMaleSibling ? '侄' : '外甥';
+                    const suf = (b === '子') ? '子' : '女';
+                    resultEl.textContent = base + suf; explainEl.textContent = '兄弟姐妹的子女'; return
+                }
+                // spouse -> parent (岳/公婆)
+                if ((a === '夫' || a === '妻') && (b === '父' || b === '母')) {
+                    // assume user is '我'; mapping: 我的妻/夫的父母
+                    const spouse = a; const par = b;
+                    // if my spouse is wife, her parents are 岳父/岳母
+                    if (spouse === '妻') {
+                        resultEl.textContent = (par === '父') ? '岳父' : '岳母'; explainEl.textContent = '配偶的父/母（岳父/岳母）'; return
+                    } else {
+                        // spouse is husband: husband's parents (公公/婆婆)
+                        resultEl.textContent = (par === '父') ? '公公' : '婆婆'; explainEl.textContent = '配偶（丈夫）的父/母（公公/婆婆）'; return
+                    }
+                }
+            }
+
+            // fallback: assemble descriptive path
+            let label = steps.map(s => s.code).join('的');
+            resultEl.textContent = label; explainEl.textContent = '未命中规则，返回描述性路径';
+        }
+
+        render();
+    </script>
+</body>
+
+</html>

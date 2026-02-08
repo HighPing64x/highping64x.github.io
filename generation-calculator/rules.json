@@ -1,0 +1,308 @@
+[
+    {
+        "id": "bo-gong",
+        "pattern": ["父", "父", "兄"],
+        "names": ["伯公", "伯祖", "伯翁", "大爷爷", "大爷", "大公", "大伯公", "大阿爷", "伯祖父", "伯公", "太伯父", "伯奶爷", "伯爷爷", "伯爷"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "爸爸的爸爸的哥哥"
+    },
+    {
+        "id": "shu-gong",
+        "pattern": ["父", "父", "弟"],
+        "names": ["叔公", "叔祖", "叔翁", "小爷爷", "晚公", "叔祖父", "叔公", "太叔父", "叔奶爷", "叔爷爷", "叔爷"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "爸爸的爸爸的弟弟"
+    },
+    {
+        "id": "jiu-ye-ye",
+        "pattern": ["父", "母", "兄"],
+        "names": ["舅爷爷", "舅祖", "舅爹", "太舅父", "舅祖父", "舅公", "太舅父", "舅奶爷", "舅爷爷", "舅爷"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "爸爸的妈妈的兄弟"
+    },
+    {
+        "id": "gu-nai-nai",
+        "pattern": ["父", "父", "姐"],
+        "names": ["姑奶奶", "祖姑", "姑祖母", "姑婆", "太姑母", "姑奶奶", "姑奶"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "爸爸的爸爸的姐妹"
+    },
+    {
+        "id": "yi-nai-nai",
+        "pattern": ["父", "母", "姐"],
+        "names": ["姨奶奶", "姨奶", "姨祖母", "姨婆", "太姨母", "姨奶奶", "姨奶"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "爸爸的妈妈的姐妹"
+    },
+    {
+        "id": "bo-wai-gong",
+        "pattern": ["母", "父", "兄"],
+        "names": ["伯外公", "外伯祖", "伯外祖", "大外公", "大姥爷", "大外爷", "伯外祖父", "伯外公", "伯外爷", "外伯公", "外伯祖父", "外太伯父", "伯姥爷", "伯姥公", "伯毑公", "伯毑爷", "伯嘎公"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "妈妈的爸爸的哥哥"
+    },
+    {
+        "id": "shu-wai-gong",
+        "pattern": ["母", "父", "弟"],
+        "names": ["叔外公", "外叔祖", "叔外祖", "小外公", "小姥爷", "小外爷", "叔外祖父", "叔外公", "叔外爷", "外叔公", "外叔祖父", "外太叔父", "叔姥爷", "叔姥公", "叔毑公", "叔毑爷", "叔嘎公"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "妈妈的爸爸的弟弟"
+    },
+    {
+        "id": "jiu-wai-gong",
+        "pattern": ["母", "母", "兄"],
+        "names": ["舅外公", "舅公", "舅外祖父", "舅外公", "舅外爷", "外舅公", "外舅祖父", "外太舅父", "舅姥爷", "舅姥公", "舅毑公", "舅毑爷", "舅嘎公"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "妈妈的妈妈的兄弟"
+    },
+    {
+        "id": "gu-wai-po",
+        "pattern": ["母", "父", "姐"],
+        "names": ["姑外婆", "姑婆", "姑外祖母", "姑外婆", "姑外奶", "外姑婆", "外姑祖母", "外太姑母", "姑姥姥", "姑姥娘", "姑姥婆", "姑毑婆", "姑毑毑", "姑嘎嘎", "姑嫏嫏", "姑嫏娘"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "妈妈的爸爸的姐妹"
+    },
+    {
+        "id": "yi-wai-po",
+        "pattern": ["母", "母", "姐"],
+        "names": ["姨外婆", "姨婆", "姨外祖母", "姨外婆", "姨外奶", "外姨婆", "外姨祖母", "外太姨母", "姨姥姥", "姨姥娘", "姨姥婆", "姨毑婆", "姨毑毑", "姨嘎嘎", "姨嫏嫏", "姨嫏娘"],
+        "match": "exact",
+        "priority": 100,
+        "targetGender": "any",
+        "note": "妈妈的妈妈的姐妹"
+    },
+    {
+        "id": "tang-ge",
+        "pattern": ["父", "兄", "子"],
+        "names": ["堂哥", "堂阿哥", "堂哥", "同堂哥", "从父哥", "叔伯哥", "从哥"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的兄弟的儿子"
+    },
+    {
+        "id": "gu-biao-ge",
+        "pattern": ["父", "姐", "子"],
+        "names": ["姑表哥", "姑家哥"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的姐妹的儿子"
+    },
+    {
+        "id": "jiu-biao-ge",
+        "pattern": ["母", "兄", "子"],
+        "names": ["舅表哥", "舅家哥"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的兄弟的儿子"
+    },
+    {
+        "id": "yi-ge",
+        "pattern": ["母", "姐", "子"],
+        "names": ["姨哥", "从母哥", "姨家哥", "从哥"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的姐妹的儿子"
+    },
+    {
+        "id": "tang-di",
+        "pattern": ["父", "兄", "子"],
+        "names": ["堂弟", "堂阿弟", "堂弟", "同堂弟", "从父弟", "叔伯弟", "从弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的兄弟的儿子"
+    },
+    {
+        "id": "gu-biao-di",
+        "pattern": ["父", "姐", "子"],
+        "names": ["姑表弟", "姑家弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的姐妹的儿子"
+    },
+    {
+        "id": "jiu-biao-di",
+        "pattern": ["母", "兄", "子"],
+        "names": ["舅表弟", "舅家弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的兄弟的儿子"
+    },
+    {
+        "id": "yi-di",
+        "pattern": ["母", "姐", "子"],
+        "names": ["姨弟", "从母弟", "姨家弟", "从弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的姐妹的儿子"
+    },
+    {
+        "id": "tang-xiong-di",
+        "pattern": ["父", "兄", "子"],
+        "names": ["堂兄弟", "同堂兄弟", "从父兄弟", "叔伯兄弟", "从兄弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的兄弟的儿子"
+    },
+    {
+        "id": "gu-biao-xiong-di",
+        "pattern": ["父", "姐", "子"],
+        "names": ["姑表兄弟", "姑家兄弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "爸爸的姐妹的儿子"
+    },
+    {
+        "id": "jiu-biao-xiong-di",
+        "pattern": ["母", "兄", "子"],
+        "names": ["舅表兄弟", "舅家兄弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的兄弟的儿子"
+    },
+    {
+        "id": "yi-xiong-di",
+        "pattern": ["母", "姐", "子"],
+        "names": ["姨兄弟", "从母兄弟", "姨家兄弟", "从兄弟"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "male",
+        "note": "妈妈的姐妹的儿子"
+    },
+    {
+        "id": "tang-jie",
+        "pattern": ["父", "兄", "女"],
+        "names": ["堂姐", "堂阿姐", "堂姐", "同堂姐", "从父姐", "叔伯姐", "从姐"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的兄弟的女儿"
+    },
+    {
+        "id": "gu-biao-jie",
+        "pattern": ["父", "姐", "女"],
+        "names": ["姑表姐", "姑家姐"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的姐妹的女儿"
+    },
+    {
+        "id": "jiu-biao-jie",
+        "pattern": ["母", "兄", "女"],
+        "names": ["舅表姐", "舅家姐"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的兄弟的女儿"
+    },
+    {
+        "id": "yi-jie",
+        "pattern": ["母", "姐", "女"],
+        "names": ["姨姐", "从母姐", "姨家姐", "从姐"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的姐妹的女儿"
+    },
+    {
+        "id": "tang-mei",
+        "pattern": ["父", "兄", "女"],
+        "names": ["堂妹", "堂阿妹", "堂妹", "同堂妹", "从父妹", "叔伯妹", "从妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的兄弟的女儿"
+    },
+    {
+        "id": "gu-biao-mei",
+        "pattern": ["父", "姐", "女"],
+        "names": ["姑表妹", "姑家妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的姐妹的女儿"
+    },
+    {
+        "id": "jiu-biao-mei",
+        "pattern": ["母", "兄", "女"],
+        "names": ["舅表妹", "舅家妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的兄弟的女儿"
+    },
+    {
+        "id": "yi-mei",
+        "pattern": ["母", "姐", "女"],
+        "names": ["姨妹", "从母妹", "姨家妹", "从妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的姐妹的女儿"
+    },
+    {
+        "id": "tang-jie-mei",
+        "pattern": ["父", "兄", "女"],
+        "names": ["堂姐妹", "同堂姐妹", "从父姐妹", "叔伯姐妹", "从姐妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的兄弟的女儿"
+    },
+    {
+        "id": "gu-biao-jie-mei",
+        "pattern": ["父", "姐", "女"],
+        "names": ["姑表姐妹", "姑家姐妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "爸爸的姐妹的女儿"
+    },
+    {
+        "id": "jiu-biao-jie-mei",
+        "pattern": ["母", "兄", "女"],
+        "names": ["舅表姐妹", "舅家姐妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的兄弟的女儿"
+    },
+    {
+        "id": "yi-jie-mei",
+        "pattern": ["母", "姐", "女"],
+        "names": ["姨姐妹", "从母姐妹", "姨家姐妹", "从姐妹"],
+        "match": "exact",
+        "priority": 80,
+        "targetGender": "female",
+        "note": "妈妈的姐妹的女儿"
+    }
+]
