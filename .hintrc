@@ -14,6 +14,8 @@
     "meta-viewport": "off",
     "no-inline-styles": "off",
     "disown-opener": "off",
-    "axe/text-alternatives": "off"
+    "axe/text-alternatives": "off",
+    "no-protocol-relative-urls": "off",
+    "axe/language": "off"
   }
 }

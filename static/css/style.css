@@ -95,6 +95,60 @@ body {
     transition: color 0.1s ease;
     color: var(--main_text_color);
 
+
+    /* Desktop-specific performance overrides */
+    body {
+        background-attachment: scroll;
+    }
+
+    .gradientText {
+        animation-duration: 30s; /* slow down gradient to reduce CPU */
+    }
+
+    .iconItem {
+        position: relative;
+        width: 49px; /* keep fixed width to avoid layout shifts */
+        transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.18s ease;
+    }
+    .iconTip {
+        position: absolute;
+        left: 56px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+        white-space: nowrap;
+    }
+    .iconItem:hover {
+        transform: translateY(-2px) scale(1.05);
+        background: var(--item_hover_color);
+    }
+    .iconItem:hover .iconTip {
+        opacity: 1;
+    }
+
+    .projectItem {
+        display: flex;
+        align-items: center;
+    }
+    .projectItemLeft {
+        width: auto !important;
+        flex: 1 1 auto;
+        transition: none !important; /* avoid width transitions */
+    }
+    .projectItemRight {
+        flex: 0 0 56px !important;
+        width: 56px !important;
+        transition: none !important;
+    }
+    .projectItem:hover {
+        transform: translateY(-2px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gradientText, #zyyo-loading-center, .tc-main { animation: none !important; transition: none !important; }
+    }
 }
 
 #zyyo-loading {
