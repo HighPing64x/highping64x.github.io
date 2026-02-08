@@ -876,3 +876,26 @@ footer {
 .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
     right: 50%;
 }
+
+/* Performance improvements: reduce paint cost and hint GPU acceleration */
+.zyyo-main, .projectItem, .projectItemRight img, .iconItem {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.zyyo-left, .iconContainer, #line {
+    -webkit-overflow-scrolling: touch;
+}
+
+.projectItem {
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* Reduce heavy backdrop-filter usage fallback for low-end devices */
+@media (max-width: 480px) {
+    .zyyo-filter, .left-div, .iconItem, .projectItem, footer {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}

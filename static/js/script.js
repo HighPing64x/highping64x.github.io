@@ -165,46 +165,50 @@ document.addEventListener('DOMContentLoaded', function () {
 
    
 
-    var fpsElement = document.createElement('div');
-    fpsElement.id = 'fps';
-    fpsElement.style.zIndex = '10000';
-    fpsElement.style.position = 'fixed';
-    fpsElement.style.left = '0';
-    document.body.insertBefore(fpsElement, document.body.firstChild);
+    // 为性能考虑，FPS 面板默认关闭。如需启用，设置 enableFPS=true
+    var enableFPS = false;
+    if (enableFPS) {
+        var fpsElement = document.createElement('div');
+        fpsElement.id = 'fps';
+        fpsElement.style.zIndex = '10000';
+        fpsElement.style.position = 'fixed';
+        fpsElement.style.left = '0';
+        document.body.insertBefore(fpsElement, document.body.firstChild);
 
-    var showFPS = (function () {
-        var requestAnimationFrame = window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-                window.setTimeout(callback, 1000 / 60);
+        var showFPS = (function () {
+            var requestAnimationFrame = window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+
+            var fps = 0,
+                last = Date.now(),
+                offset, step, appendFps;
+
+            step = function () {
+                offset = Date.now() - last;
+                fps += 1;
+
+                if (offset >= 1000) {
+                    last += offset;
+                    appendFps(fps);
+                    fps = 0;
+                }
+
+                requestAnimationFrame(step);
             };
 
-        var fps = 0,
-            last = Date.now(),
-            offset, step, appendFps;
+            appendFps = function (fpsValue) {
+                fpsElement.textContent = 'FPS: ' + fpsValue;
+            };
 
-        step = function () {
-            offset = Date.now() - last;
-            fps += 1;
-
-            if (offset >= 1000) {
-                last += offset;
-                appendFps(fps);
-                fps = 0;
-            }
-
-            requestAnimationFrame(step);
-        };
-
-        appendFps = function (fpsValue) {
-            fpsElement.textContent = 'FPS: ' + fpsValue;
-        };
-
-        step();
-    })();
+            step();
+        })();
+    }
     
     
     
