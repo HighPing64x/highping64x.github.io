@@ -224,7 +224,55 @@ document.addEventListener('DOMContentLoaded', function () {
 var pageLoading = document.querySelector("#zyyo-loading");
 window.addEventListener('load', function() {
     setTimeout(function () {
-        pageLoading.style.opacity = '0';
+        if (pageLoading) {
+            pageLoading.style.opacity = '0';
+            // 在过渡完成后彻底从 DOM 中移除，释放内存
+            pageLoading.addEventListener('transitionend', function removeLoading() {
+                try {
+                    if (pageLoading && pageLoading.parentNode) pageLoading.parentNode.removeChild(pageLoading);
+                } catch (e) {}
+                pageLoading = null;
+            });
+        }
+        // 也移除全局遮罩滤镜以释放资源
+        var filter = document.querySelector('.zyyo-filter');
+        if (filter && filter.parentNode) filter.parentNode.removeChild(filter);
     }, 100);
+});
+
+// 延迟并惰性加载外部统计脚本，降低初始内存/CPU 压力
+function loadAnalyticsDeferred() {
+    var placeholder = document.getElementById('LA_COLLECT');
+    if (!placeholder) return;
+    var src = placeholder.getAttribute('data-src');
+    if (!src) return;
+    // 防止多次加载
+    if (window._la_loaded) return;
+    window._la_loaded = true;
+    var s = document.createElement('script');
+    s.src = src;
+    s.charset = 'UTF-8';
+    s.onload = function () {
+        try {
+            if (window.LA && typeof window.LA.init === 'function') {
+                window.LA.init({ id: "KFqltKSkJgQTGD9l", ck: "KFqltKSkJgQTGD9l" });
+            }
+        } catch (e) {}
+    };
+    document.body.appendChild(s);
+    // 移除占位节点
+    try { placeholder.parentNode.removeChild(placeholder); } catch (e) {}
+}
+
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadAnalyticsDeferred, { timeout: 5000 });
+} else {
+    setTimeout(loadAnalyticsDeferred, 5000);
+}
+['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (ev) {
+    window.addEventListener(ev, function onFirst() {
+        loadAnalyticsDeferred();
+        ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (e) { window.removeEventListener(e, onFirst); });
+    });
 });
 
