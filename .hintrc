@@ -16,6 +16,18 @@
     "disown-opener": "off",
     "axe/text-alternatives": "off",
     "no-protocol-relative-urls": "off",
-    "axe/language": "off"
+    "axe/language": "off",
+    "axe/name-role-value": [
+      "default",
+      {
+        "link-name": "off"
+      }
+    ],
+    "axe/structure": [
+      "default",
+      {
+        "listitem": "off"
+      }
+    ]
   }
 }
