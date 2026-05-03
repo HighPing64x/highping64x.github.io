@@ -1582,6 +1582,98 @@
 			};
 		});
 	</script>
+
+	<!-- Image Preview Modal -->
+	<style>
+	/* image preview modal */
+	/* 使用更贴合风格的中英文字体栈：优先无衬线现代风格，回退到系统中文黑体 */
+	.img-preview-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:2147483646;font-family:"Helvetica Neue", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, sans-serif}
+	.img-preview-overlay[hidden]{display:none}
+	.img-preview-inner{position:relative;max-width:95vw;max-height:95vh;display:flex;align-items:center;justify-content:center}
+	.img-preview-image{max-width:90vw;max-height:90vh;transition:transform .15s ease;cursor:grab;display:block}
+	/* 将关闭按钮固定在视口右上，改为透明简洁样式，去掉圆形背景 */
+	.img-preview-close{position:fixed;top:18px;right:18px;background:transparent;color:#fff;border-radius:4px;border:none;padding:6px 10px;min-width:36px;min-height:36px;box-shadow:none;font-size:20px;cursor:pointer;z-index:2147483647}
+	.img-preview-close:hover{background:rgba(255,255,255,0.04)}
+	.img-preview-controls{position:absolute;bottom:-46px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+	.img-preview-controls button{background:#111;color:#fff;border:1px solid rgba(255,255,255,0.06);padding:6px 10px;border-radius:6px;cursor:pointer}
+	@media (max-width:900px){.img-preview-controls{bottom:8px}}
+	</style>
+
+	<div id="imgPreviewOverlay" class="img-preview-overlay" hidden aria-hidden="true" role="dialog" aria-label="图片预览">
+		<div class="img-preview-inner" role="document">
+			<button class="img-preview-close" aria-label="关闭">✕</button>
+			<img id="imgPreviewImage" class="img-preview-image" src="" alt="">
+			<div class="img-preview-controls" role="group" aria-label="图片缩放控制">
+				<button id="imgZoomOut" aria-label="缩小">−</button>
+				<button id="imgZoomReset" aria-label="重置">100%</button>
+				<button id="imgZoomIn" aria-label="放大">＋</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	(function(){
+		const overlay = document.getElementById('imgPreviewOverlay');
+		const imgEl = document.getElementById('imgPreviewImage');
+		const btnClose = overlay.querySelector('.img-preview-close');
+		const btnIn = document.getElementById('imgZoomIn');
+		const btnOut = document.getElementById('imgZoomOut');
+		const btnReset = document.getElementById('imgZoomReset');
+		let scale = 1;
+		let lastClicked = null;
+
+		function update(){
+			imgEl.style.transform = 'scale(' + scale + ')';
+			btnReset.textContent = Math.round(scale*100) + '%';
+		}
+
+		function openPreview(src, alt, clicked){
+			lastClicked = clicked || null;
+			imgEl.src = src;
+			imgEl.alt = alt || '';
+			scale = 1;
+			update();
+			overlay.hidden = false; overlay.setAttribute('aria-hidden','false');
+			document.body.style.overflow = 'hidden';
+			// focus for key events
+			imgEl.tabIndex = -1; imgEl.focus();
+		}
+
+		function closePreview(){
+			overlay.hidden = true; overlay.setAttribute('aria-hidden','true');
+			document.body.style.overflow = '';
+			imgEl.src = '';
+			if(lastClicked){ try{ lastClicked.scrollIntoView({behavior:'smooth', block:'center'}); if(typeof lastClicked.focus === 'function') lastClicked.focus(); }catch(e){}
+			}
+			lastClicked = null;
+		}
+
+		// Attach handlers to images within main page wrapper
+		document.querySelectorAll('#page-wrapper img').forEach(img => {
+			img.style.cursor = 'zoom-in';
+			if(!img.hasAttribute('tabindex')) img.tabIndex = 0;
+			img.addEventListener('click', (e)=>{ openPreview(img.src, img.alt, img); });
+			img.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') openPreview(img.src, img.alt, img); });
+		});
+
+		btnClose.addEventListener('click', closePreview);
+		overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closePreview(); });
+		btnIn.addEventListener('click', ()=>{ scale = Math.min(5, +(scale + 0.2).toFixed(2)); update(); });
+		btnOut.addEventListener('click', ()=>{ scale = Math.max(0.2, +(scale - 0.2).toFixed(2)); update(); });
+		btnReset.addEventListener('click', ()=>{ scale = 1; update(); });
+
+		imgEl.addEventListener('wheel', (e)=>{ e.preventDefault(); scale = e.deltaY < 0 ? Math.min(5, +(scale + 0.1).toFixed(2)) : Math.max(0.2, +(scale - 0.1).toFixed(2)); update(); }, {passive:false});
+		imgEl.addEventListener('dblclick', ()=>{ scale = 1; update(); });
+
+		document.addEventListener('keydown', (e)=>{
+			if(overlay && !overlay.hidden){
+				if(e.key === 'Escape' || e.key === 'Enter'){ e.preventDefault(); closePreview(); }
+				if(e.key === '+' || e.key === '=' ) { scale = Math.min(5, +(scale + 0.2).toFixed(2)); update(); }
+				if(e.key === '-' || e.key === '_' ) { scale = Math.max(0.2, +(scale - 0.2).toFixed(2)); update(); }
+			}
+		});
+	})();
+	</script>
 </body>
 
 </html>
