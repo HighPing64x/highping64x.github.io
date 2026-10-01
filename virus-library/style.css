@@ -170,6 +170,9 @@ body {
     z-index: 2;
     color: #e2e8f0;
     font-weight: 400;
+    /* 窄屏下长英文链接不再撑破卡片 */
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .download-item:hover {
@@ -216,6 +219,7 @@ body {
     position: relative;
     z-index: 2;
     font-weight: 500;
+    overflow-wrap: anywhere;
 }
 
 .tool-meta {
@@ -234,6 +238,7 @@ body {
     margin-bottom: 1rem;
     position: relative;
     z-index: 2;
+    overflow-wrap: anywhere;
 }
 
 .tool-link a {

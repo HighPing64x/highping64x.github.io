@@ -1,209 +1,152 @@
-document.addEventListener('contextmenu', function (event) {
-    event.preventDefault();
-});
+/* ==========================================================================
+   HighPing 个人主页 —— 脚本
+   只保留必要逻辑：主题、二维码弹窗、技能图懒加载、加载遮罩、统计脚本延迟加载
+   原有逐卡片绑定 6 个事件监听的写法已移除（按压反馈改由 CSS :active 完成）
+   ========================================================================== */
+(function () {
+    'use strict';
 
-function handlePress(event) {
-    this.classList.add('pressed');
-}
+    var doc = document;
+    var root = doc.documentElement;
+    var THEME_KEY = 'hp-theme';
 
-function handleRelease(event) {
-    this.classList.remove('pressed');
-}
-
-function handleCancel(event) {
-    this.classList.remove('pressed');
-}
-
-var buttons = document.querySelectorAll('.projectItem');
-buttons.forEach(function (button) {
-    button.addEventListener('mousedown', handlePress);
-    button.addEventListener('mouseup', handleRelease);
-    button.addEventListener('mouseleave', handleCancel);
-    button.addEventListener('touchstart', handlePress);
-    button.addEventListener('touchend', handleRelease);
-    button.addEventListener('touchcancel', handleCancel);
-});
-
-function toggleClass(selector, className) {
-    var elements = document.querySelectorAll(selector);
-    elements.forEach(function (element) {
-        element.classList.toggle(className);
-    });
-}
-
-function pop(imageURL) {
-    var tcMainElement = document.querySelector(".tc-img");
-    if (!tcMainElement) return;
-    if (imageURL) {
-        tcMainElement.src = imageURL;
-    }
-    toggleClass(".tc-main", "active");
-    toggleClass(".tc", "active");
-}
-
-var tc = document.getElementsByClassName('tc');
-var tc_main = document.getElementsByClassName('tc-main');
-if (tc[0]) {
-    tc[0].addEventListener('click', function (event) {
-        pop();
-    });
-}
-if (tc_main[0]) {
-    tc_main[0].addEventListener('click', function (event) {
-        event.stopPropagation();
-    });
-}
-
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + value + expires + "; path=/";
-}
-
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        while (cookie.charAt(0) == ' ') {
-            cookie = cookie.substring(1, cookie.length);
-        }
-        if (cookie.indexOf(nameEQ) == 0) {
-            return cookie.substring(nameEQ.length, cookie.length);
-        }
-    }
-    return null;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    var html = document.querySelector('html');
-    var tanChiShe = document.getElementById("tanChiShe");
-    var checkBox = document.getElementById('myonoffswitch');
-    var themeState = getCookie("themeState") || "Light";
-
-    function changeTheme(theme) {
-        theme = (theme === "Dark") ? "Dark" : "Light";
-        if (tanChiShe) {
-            tanChiShe.src = "./static/svg/snake-" + theme + ".svg";
-        }
-        if (html) {
-            html.dataset.theme = theme;
-        }
-        setCookie("themeState", theme, 365);
-        themeState = theme;
+    /* ---------------------------- 主题切换 ---------------------------- */
+    function readTheme() {
+        try {
+            var saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'Dark' || saved === 'Light') return saved;
+        } catch (e) { /* 隐私模式下忽略 */ }
+        return root.dataset.theme === 'Light' ? 'Light' : 'Dark';
     }
 
-    // 开关勾选 = 浅色主题，未勾选 = 深色主题
-    if (checkBox) {
-        checkBox.checked = (themeState === "Light");
-        checkBox.addEventListener('change', function () {
-            changeTheme(checkBox.checked ? "Light" : "Dark");
+    function applyTheme(theme) {
+        theme = theme === 'Light' ? 'Light' : 'Dark';
+        root.dataset.theme = theme;
+
+        var snake = doc.getElementById('tanChiShe');
+        if (snake) snake.src = './static/svg/snake-' + theme + '.svg';
+
+        var box = doc.getElementById('myonoffswitch');
+        if (box) box.checked = (theme === 'Light'); /* 勾选 = 浅色档 */
+
+        try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* 忽略 */ }
+    }
+
+    var themeBox = doc.getElementById('myonoffswitch');
+    if (themeBox) {
+        themeBox.addEventListener('change', function () {
+            applyTheme(themeBox.checked ? 'Light' : 'Dark');
         });
     }
+    applyTheme(readTheme());
 
-    changeTheme(themeState);
+    /* ---------------------------- 二维码弹窗 ---------------------------- */
+    var tc = doc.querySelector('.tc');
+    var tcImg = doc.querySelector('.tc-img');
+    var qqBtn = doc.getElementById('qqBtn');
 
-    // 为性能考虑，FPS 面板默认关闭。如需启用，设置 enableFPS=true
-    var enableFPS = false;
-    if (enableFPS) {
-        var fpsElement = document.createElement('div');
-        fpsElement.id = 'fps';
-        fpsElement.style.zIndex = '10000';
-        fpsElement.style.position = 'fixed';
-        fpsElement.style.left = '0';
-        document.body.insertBefore(fpsElement, document.body.firstChild);
-
-        var requestAnimationFrame = window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-
-        var fps = 0,
-            last = Date.now(),
-            offset;
-
-        var appendFps = function (fpsValue) {
-            fpsElement.textContent = 'FPS: ' + fpsValue;
-        };
-
-        var step = function () {
-            offset = Date.now() - last;
-            fps += 1;
-
-            if (offset >= 1000) {
-                last += offset;
-                appendFps(fps);
-                fps = 0;
-            }
-
-            requestAnimationFrame(step);
-        };
-
-        step();
+    function openQR() {
+        if (!tc) return;
+        /* 二维码改为打开时才下载 */
+        if (tcImg && tcImg.dataset.src && tcImg.getAttribute('src') !== tcImg.dataset.src) {
+            tcImg.src = tcImg.dataset.src;
+        }
+        tc.classList.add('active');
     }
 
-    // 需要时可手动弹出图片：pop('./static/img/qq.jpg')
-});
+    function closeQR() {
+        if (tc) tc.classList.remove('active');
+    }
 
-var pageLoading = document.querySelector("#zyyo-loading");
-window.addEventListener('load', function () {
-    setTimeout(function () {
-        if (pageLoading) {
-            pageLoading.style.opacity = '0';
-            // 在过渡完成后彻底从 DOM 中移除，释放内存
-            pageLoading.addEventListener('transitionend', function removeLoading() {
-                try {
-                    if (pageLoading && pageLoading.parentNode) pageLoading.parentNode.removeChild(pageLoading);
-                } catch (e) {}
-                pageLoading = null;
-            });
-        }
-        // 也移除全局遮罩滤镜以释放资源
-        var filter = document.querySelector('.zyyo-filter');
-        if (filter && filter.parentNode) filter.parentNode.removeChild(filter);
-    }, 100);
-});
-
-// 延迟并惰性加载外部统计脚本，降低初始内存/CPU 压力
-function loadAnalyticsDeferred() {
-    var placeholder = document.getElementById('LA_COLLECT');
-    if (!placeholder) return;
-    var src = placeholder.getAttribute('data-src');
-    if (!src) return;
-    // 防止多次加载
-    if (window._la_loaded) return;
-    window._la_loaded = true;
-    var s = document.createElement('script');
-    s.src = src;
-    s.charset = 'UTF-8';
-    s.onload = function () {
-        try {
-            if (window.LA && typeof window.LA.init === 'function') {
-                window.LA.init({ id: "KFqltKSkJgQTGD9l", ck: "KFqltKSkJgQTGD9l" });
-            }
-        } catch (e) {}
-    };
-    document.body.appendChild(s);
-    // 移除占位节点
-    try { placeholder.parentNode.removeChild(placeholder); } catch (e) {}
-}
-
-if ('requestIdleCallback' in window) {
-    requestIdleCallback(loadAnalyticsDeferred, { timeout: 5000 });
-} else {
-    setTimeout(loadAnalyticsDeferred, 5000);
-}
-['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (ev) {
-    window.addEventListener(ev, function onFirst() {
-        loadAnalyticsDeferred();
-        ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (e) { window.removeEventListener(e, onFirst); });
+    if (qqBtn) qqBtn.addEventListener('click', openQR);
+    if (tc) {
+        tc.addEventListener('click', function (event) {
+            if (event.target === tc) closeQR();
+        });
+    }
+    doc.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeQR();
     });
-});
+
+    /* ---------------------------- 技能图懒加载 ---------------------------- */
+    function loadSkillImage() {
+        var isNarrow = window.matchMedia('(max-width: 800px)').matches;
+        var img = doc.getElementById(isNarrow ? 'skillWap' : 'skillPc');
+        if (img && img.dataset.src) {
+            img.src = img.dataset.src;
+            delete img.dataset.src;
+        }
+    }
+
+    var skillBox = doc.querySelector('.skill');
+    if (skillBox && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+                if (entries[i].isIntersecting) {
+                    loadSkillImage();
+                    observer.disconnect();
+                    break;
+                }
+            }
+        }, { rootMargin: '600px 0px' });
+        observer.observe(skillBox);
+    } else if (skillBox) {
+        loadSkillImage();
+    }
+
+    /* ---------------------------- 加载遮罩 ---------------------------- */
+    var loader = doc.getElementById('zyyo-loading');
+    function hideLoader() {
+        if (!loader) return;
+        loader.classList.add('is-hidden');
+        setTimeout(function () {
+            if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+            loader = null;
+        }, 260);
+    }
+
+    if (doc.readyState === 'complete') {
+        hideLoader();
+    } else {
+        window.addEventListener('load', hideLoader, { once: true });
+    }
+
+    /* ---------------------------- 右键菜单 ---------------------------- */
+    doc.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+    });
+
+    /* ---------------------------- 统计脚本延迟加载 ---------------------------- */
+    function loadAnalyticsDeferred() {
+        var placeholder = doc.getElementById('LA_COLLECT');
+        if (!placeholder || window._laLoaded) return;
+        var src = placeholder.getAttribute('data-src');
+        if (!src) return;
+        window._laLoaded = true;
+
+        var script = doc.createElement('script');
+        script.src = src;
+        script.charset = 'UTF-8';
+        script.onload = function () {
+            try {
+                if (window.LA && typeof window.LA.init === 'function') {
+                    window.LA.init({ id: 'KFqltKSkJgQTGD9l', ck: 'KFqltKSkJgQTGD9l' });
+                }
+            } catch (e) { /* 忽略 */ }
+        };
+        doc.body.appendChild(script);
+        if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+    }
+
+    var idle = window.requestIdleCallback || function (fn) { setTimeout(fn, 3000); };
+    idle(loadAnalyticsDeferred, { timeout: 5000 });
+
+    ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (name) {
+        window.addEventListener(name, function onFirst() {
+            loadAnalyticsDeferred();
+            ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (other) {
+                window.removeEventListener(other, onFirst);
+            });
+        }, { passive: true, once: false });
+    });
+})();
