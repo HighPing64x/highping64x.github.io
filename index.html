@@ -6,11 +6,18 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>
-			HighPing </title>
+			HighPing · 个人主页 </title>
 		<link rel="icon" href="./static/img/favicon.ico">
-		<meta name="description" content="HighPing的个人主页">
+		<meta name="description"
+			content="HighPing 的个人主页 —— ToolKit 开发者，C# / Python / Batch，CheatEngine 与 Minecraft 爱好者，收录个人作品与 GitHub 项目。">
 		<meta name="keywords"
-			content="highping,highping64x,HighPing,HighPing的个人主页,Highping的网站">
+			content="highping,highping64x,HighPing,HighPing的个人主页,Highping的网站,病毒博物馆,辈分计算器,图寻助手,tuxun-helper">
+		<meta name="author" content="HighPing">
+		<meta name="theme-color" content="#472eff">
+		<meta property="og:type" content="website">
+		<meta property="og:title" content="HighPing · 个人主页">
+		<meta property="og:description" content="ToolKit 开发者 · C# / Python · CheatEngine / Minecraft">
+		<meta property="og:url" content="https://highping64x.github.io/">
 		<meta name="viewport"
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" href="./static/css/style.css">
@@ -53,6 +60,8 @@
 					<div class="left-tag-item">CheatEngine</div>
 					<div class="left-tag-item">Minecraft</div>
 					<div class="left-tag-item">C#</div>
+					<div class="left-tag-item">Python</div>
+					<div class="left-tag-item">Kotlin</div>
 					<div class="left-tag-item">CASTIC多次获奖</div>
 					<div class="left-tag-item">三维设计一级</div>
 				</div>
@@ -60,9 +69,27 @@
 					<ul id="line">
 						<li>
 							<div class="focus"></div>
+							<div>主页改版，新增GitHub项目展示
+							</div>
+							<div>2026.10</div>
+						</li>
+						<li>
+							<div class="focus"></div>
+							<div>图寻助手 tuxun-helper 开源
+							</div>
+							<div>2026.9</div>
+						</li>
+						<li>
+							<div class="focus"></div>
 							<div>拥有MCD正版
 							</div>
 							<div>2026.8</div>
+						</li>
+						<li>
+							<div class="focus"></div>
+							<div>自动扣字机 AutoText 开源
+							</div>
+							<div>2026.5</div>
 						</li>
 						<li>
 							<div class="focus"></div>
@@ -116,7 +143,7 @@
 							class="purpleText">think</span>, therefore I <span class="purpleText">am </span>. </div>
 
 					<div class="iconContainer">
-						<a class="iconItem" onclick href="https://github.com/HighPing64x/">
+						<a class="iconItem" target="_blank" rel="noopener" href="https://github.com/HighPing64x/">
 							<svg t="1704870335945" class="icon" viewBox="0 0 1024 1024" version="1.1"
 								xmlns="http://www.w3.org/2000/svg" p-id="2487">
 								<path
@@ -124,7 +151,7 @@
 									p-id="2488"></path>
 							</svg>
 							<div class="iconTip">Github</div>
-						</a><a class="iconItem" onclick href="javascript:void(0)">
+						</a><!-- TODO: 填入邮箱后改为 mailto:xxx@xxx --><a class="iconItem" href="javascript:void(0)" aria-label="Mail">
 							<svg t="1704870588438" class="icon" viewBox="0 0 1024 1024" version="1.1"
 								xmlns="http://www.w3.org/2000/svg" p-id="3174">
 								<path
@@ -140,10 +167,20 @@
 									p-id="1862"></path></svg>
 							<div class="iconTip">QQ</div>
 						</a>
+						<div class="switch" title="切换主题">
+							<div class="onoffswitch">
+								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+									id="myonoffswitch" checked>
+								<label class="onoffswitch-label" for="myonoffswitch">
+									<span class="onoffswitch-inner"></span>
+									<span class="onoffswitch-switch"></span>
+								</label>
+							</div>
+						</div>
 					</div>
 
-					<div class="Snake">
-						<img id="Snake" loading="lazy" decoding="async" src="./static/svg/snake-Light.svg" alt="snake">
+					<div class="tanChiShe">
+						<img id="tanChiShe" loading="lazy" decoding="async" src="./static/svg/snake-Light.svg" alt="snake">
 					</div>
 				</header>
 
@@ -155,41 +192,42 @@
 								d="M629.333333 202.666667v213.333333h277.333334v448h-512v-213.333333h-277.333334v-448h512z m213.333334 277.333333h-213.333334v170.666667h-170.666666v149.333333h384v-320z m-277.333334-213.333333h-384v320h213.333334v-170.666667h170.666666v-149.333333z m0 213.333333h-106.666666v106.666667h106.666666v-106.666667z"
 								p-id="1892"></path>
 						</svg>site </div>
-					<div class="projectList"><a class="projectItem a" target="_blank" href="https://space.bilibili.com/3461564780775686">
+					<div class="projectList"><a class="projectItem a" target="_blank" rel="noopener"
+							href="https://space.bilibili.com/3461564780775686">
 							<div class="projectItemLeft">
 								<h1>Bilibili</h1>
 								<p>当个小UP主</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i1.png" alt="i1">
+								<img loading="lazy" decoding="async" src="./static/img/i1.png" alt="Bilibili">
 							</div>
 
-						</a><a class="projectItem a" target="_blank" href="virus-library/index.html">
+						</a><a class="projectItem a" target="_blank" rel="noopener" href="virus-library/index.html">
 							<div class="projectItemLeft">
 								<h1>病毒博物馆</h1>
 								<p>记录各种电脑病毒</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i2.png" alt="i2">
+								<img loading="lazy" decoding="async" src="./static/img/i2.png" alt="病毒博物馆">
 							</div>
 
-						</a>
-						<a class="projectItem a" target="_blank" href="https://github.com/HighPing64x/endfield-docmaker">
+						</a><a class="projectItem a" target="_blank" rel="noopener" href="./generation-calculator/index.html">
+							<div class="projectItemLeft">
+								<h1>辈分计算器</h1>
+								<p>亲戚称呼一键换算</p>
+							</div>
+							<div class="projectItemRight">
+								<img loading="lazy" decoding="async" src="./generation-calculator/icon.png" alt="辈分计算器">
+							</div>
+
+						</a><a class="projectItem a" target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x/endfield-docmaker">
 							<div class="projectItemLeft">
 								<h1>红头文件生成器</h1>
-								<p>基于Naptie的终末地文档生成器</p>
+								<p>终末地红头文件生成器</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i0.png" alt="i0">
-							</div>
-
-						</a><a class="projectItem a" target="_blank" href="https://github.com/HighPing64x/QQListExport">
-							<div class="projectItemLeft">
-								<h1>QQ列表导出器</h1>
-								<p>C#</p>
-							</div>
-							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i0.png" alt="i0">
+								<img loading="lazy" decoding="async" src="./static/svg/github.svg" alt="GitHub">
 							</div>
 
 						</a></div>
@@ -199,42 +237,49 @@
 							<path
 								d="M629.333333 202.666667v213.333333h277.333334v448h-512v-213.333333h-277.333334v-448h512z m213.333334 277.333333h-213.333334v170.666667h-170.666666v149.333333h384v-320z m-277.333334-213.333333h-384v320h213.333334v-170.666667h170.666666v-149.333333z m0 213.333333h-106.666666v106.666667h106.666666v-106.666667z"
 								p-id="1892"></path>
-						</svg>project </div>
+						</svg>github </div>
 					<div class="projectList">
-						</a><a class="projectItem b" target="_blank" href="./generation-calculator/index.html">
+						<a class="projectItem b" target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x/tuxun-helper">
 							<div class="projectItemLeft">
-								<h1>辈分计算器</h1>
-								<p>计算辈分</p>
+								<h1>图寻助手 · tuxun-helper</h1>
+								<p>AI 图寻 / GeoGuessr 辅助：实时取点、街景分析、复盘对答案 · Python</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./generation-calculator/icon.png" alt>
+								<img loading="lazy" decoding="async" src="./static/svg/github.svg" alt="GitHub">
 							</div>
-						</a><a class="projectItem b" target="_blank" href="https://zyyo.cc">
+						</a><a class="projectItem b" target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x/AutoText">
 							<div class="projectItemLeft">
-								<h1>敬请期待......</h1>
-								<p></p>
+								<h1>自动扣字机 · AutoText</h1>
+								<p>自动扣字 / 刷屏辅助，绝大多数聊天平台可用 · C#</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i0.png" alt>
+								<img loading="lazy" decoding="async" src="./static/svg/github.svg" alt="GitHub">
 							</div>
-						</a><a class="projectItem b" target="_blank" href="https://zyyo.cc">
+						</a><a class="projectItem b" target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x/QQListExport">
 							<div class="projectItemLeft">
-								<h1>敬请期待......</h1>
-								<p></p>
+								<h1>QQ列表导出器 · QQListExport</h1>
+								<p>导出 QQ 好友与群列表 · C#</p>
 							</div>
 							<div class="projectItemRight">
-								<img loading="lazy" decoding="async" src="./static/img/i0.png" alt>
+								<img loading="lazy" decoding="async" src="./static/svg/github.svg" alt="GitHub">
 							</div>
-						</a><a class="projectItem b" target="_blank" href="https://zyyo.cc">
+						</a><a class="projectItem b" target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x/CheatTableDecrypt">
 							<div class="projectItemLeft">
-								<h1>敬请期待......</h1>
-								<p></p>
+								<h1>CE 表单解密 · CheatTableDecrypt</h1>
+								<p>Cheat Engine 加密表单解密工具 · C#</p>
 							</div>
 							<div class="projectItemRight">
-								<img src="./static/img/i0.png" alt>
+								<img loading="lazy" decoding="async" src="./static/svg/github.svg" alt="GitHub">
 							</div>
-
 						</a></div>
+					<div class="projectMore">
+						<a target="_blank" rel="noopener"
+							href="https://github.com/HighPing64x?tab=repositories">在 GitHub 查看全部仓库 →</a>
+					</div>
 
 					<div class="title">
 						<svg t="1705257823317" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -246,18 +291,18 @@
 						List
 					</div>
 					<div class="skill">
-						<img id="skillPc" loading="lazy" decoding="async" src="./static/svg/skillPc.svg" alt srcset>
-						<img id="skillWap" loading="lazy" decoding="async" src="./static/svg/skillWap.svg" alt srcset>
+						<img id="skillPc" loading="lazy" decoding="async" src="./static/svg/skillPc.svg" alt="技能">
+						<img id="skillWap" loading="lazy" decoding="async" src="./static/svg/skillWap.svg" alt="技能">
 					</div>
 				</content>
 			</div>
 		</div>
 		<footer>
-			HighPing © 2025 | HTML By Zyyo
+			HighPing © 2026 | HTML By Zyyo
 		</footer>
-				<div class="tc">
-			<div onclick class="tc-main">
-				<img class="tc-img" loading="lazy" decoding="async" src alt srcset>
+		<div class="tc">
+			<div class="tc-main">
+				<img class="tc-img" loading="lazy" decoding="async" src="./static/img/qq.jpg" alt="QQ">
 			</div>
 
 		</div>

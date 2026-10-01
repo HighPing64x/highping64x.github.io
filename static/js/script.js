@@ -33,6 +33,7 @@ function toggleClass(selector, className) {
 
 function pop(imageURL) {
     var tcMainElement = document.querySelector(".tc-img");
+    if (!tcMainElement) return;
     if (imageURL) {
         tcMainElement.src = imageURL;
     }
@@ -42,14 +43,16 @@ function pop(imageURL) {
 
 var tc = document.getElementsByClassName('tc');
 var tc_main = document.getElementsByClassName('tc-main');
-tc[0].addEventListener('click', function (event) {
-    pop();
-});
-tc_main[0].addEventListener('click', function (event) {
-    event.stopPropagation();
-});
-
-
+if (tc[0]) {
+    tc[0].addEventListener('click', function (event) {
+        pop();
+    });
+}
+if (tc_main[0]) {
+    tc_main[0].addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+}
 
 function setCookie(name, value, days) {
     var expires = "";
@@ -76,85 +79,33 @@ function getCookie(name) {
     return null;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
-
-
-
-
-
-
     var html = document.querySelector('html');
-    var themeState = getCookie("themeState") || "Light";
     var tanChiShe = document.getElementById("tanChiShe");
-
-
-
-
-
+    var checkBox = document.getElementById('myonoffswitch');
+    var themeState = getCookie("themeState") || "Light";
 
     function changeTheme(theme) {
-        tanChiShe.src = "./static/svg/snake-" + theme + ".svg";
-        html.dataset.theme = theme;
+        theme = (theme === "Dark") ? "Dark" : "Light";
+        if (tanChiShe) {
+            tanChiShe.src = "./static/svg/snake-" + theme + ".svg";
+        }
+        if (html) {
+            html.dataset.theme = theme;
+        }
         setCookie("themeState", theme, 365);
         themeState = theme;
     }
 
-
-
-
-
-
-
-    var Checkbox = document.getElementById('myonoffswitch')
-    Checkbox.addEventListener('change', function () {
-        if (themeState == "Dark") {
-            changeTheme("Light");
-        } else if (themeState == "Light") {
-            changeTheme("Dark");
-        } else {
-            changeTheme("Dark");
-        }
-    });
-
-
-
-    if (themeState == "Dark") {
-        Checkbox.checked = false;
+    // 开关勾选 = 浅色主题，未勾选 = 深色主题
+    if (checkBox) {
+        checkBox.checked = (themeState === "Light");
+        checkBox.addEventListener('change', function () {
+            changeTheme(checkBox.checked ? "Light" : "Dark");
+        });
     }
 
     changeTheme(themeState);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
 
     // 为性能考虑，FPS 面板默认关闭。如需启用，设置 enableFPS=true
     var enableFPS = false;
@@ -166,54 +117,44 @@ document.addEventListener('DOMContentLoaded', function () {
         fpsElement.style.left = '0';
         document.body.insertBefore(fpsElement, document.body.firstChild);
 
-        var showFPS = (function () {
-            var requestAnimationFrame = window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-
-            var fps = 0,
-                last = Date.now(),
-                offset, step, appendFps;
-
-            step = function () {
-                offset = Date.now() - last;
-                fps += 1;
-
-                if (offset >= 1000) {
-                    last += offset;
-                    appendFps(fps);
-                    fps = 0;
-                }
-
-                requestAnimationFrame(step);
+        var requestAnimationFrame = window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback) {
+                window.setTimeout(callback, 1000 / 60);
             };
 
-            appendFps = function (fpsValue) {
-                fpsElement.textContent = 'FPS: ' + fpsValue;
-            };
+        var fps = 0,
+            last = Date.now(),
+            offset;
 
-            step();
-        })();
+        var appendFps = function (fpsValue) {
+            fpsElement.textContent = 'FPS: ' + fpsValue;
+        };
+
+        var step = function () {
+            offset = Date.now() - last;
+            fps += 1;
+
+            if (offset >= 1000) {
+                last += offset;
+                appendFps(fps);
+                fps = 0;
+            }
+
+            requestAnimationFrame(step);
+        };
+
+        step();
     }
-    
-    
-    
-    //pop('./static/img/tz.jpg')
-    
-    
-    
+
+    // 需要时可手动弹出图片：pop('./static/img/qq.jpg')
 });
 
-
-
-
 var pageLoading = document.querySelector("#zyyo-loading");
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     setTimeout(function () {
         if (pageLoading) {
             pageLoading.style.opacity = '0';
@@ -266,4 +207,3 @@ if ('requestIdleCallback' in window) {
         ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(function (e) { window.removeEventListener(e, onFirst); });
     });
 });
-

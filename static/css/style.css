@@ -737,7 +737,7 @@ footer {
     }
 
     .welcome {
-        font-size: 10vw;
+        font-size: 7vw;
         margin: 2vw 0;
 
     }
@@ -951,5 +951,35 @@ footer {
     .zyyo-filter, .left-div, .iconItem, .projectItem, footer {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
+    }
+}
+
+/* 更多仓库入口 */
+.projectMore {
+    display: flex;
+    justify-content: flex-end;
+    margin: 4px 7px 0;
+}
+
+.projectMore a {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--item_left_title_color);
+    background: var(--item_bg_color);
+    backdrop-filter: blur(var(--card_filter));
+    -webkit-backdrop-filter: blur(var(--card_filter));
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.projectMore a:hover {
+    background: var(--item_hover_color);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+    .projectMore {
+        justify-content: center;
     }
 }
